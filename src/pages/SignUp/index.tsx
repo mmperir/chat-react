@@ -13,6 +13,10 @@ const SignUp: FC = () => {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
+  function onSubmit() {
+    console.log({ nome, email, senha, confirmarSenha });
+  }
+
   return (
     <Container maxWidth="sm">
       <Typography variant="h4">Cadastro de usuário</Typography>
@@ -47,7 +51,7 @@ const SignUp: FC = () => {
         fullWidth
         variant="outlined"
       />
-      <Button variant="contained" color="primary">
+      <Button onClick={onSubmit} variant="contained" color="primary">
         Cadastrar
       </Button>
     </Container>

@@ -5,6 +5,10 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
+  function onSubmit() {
+    console.log({ email, senha });
+  }
+
   return (
     <Container maxWidth="sm">
       <Typography variant="h4">Login</Typography>
@@ -29,7 +33,9 @@ const SignIn = () => {
       <Button fullWidth variant="outlined" color="primary">
         Cadastrar-se
       </Button>
-      <Button variant="text">Esqueceu sua senha?</Button>
+      <Button onClick={onSubmit} variant="text">
+        Esqueceu sua senha?
+      </Button>
     </Container>
   );
 };
