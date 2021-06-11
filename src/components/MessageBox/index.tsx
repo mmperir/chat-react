@@ -1,7 +1,7 @@
 import { Card, Typography } from "@material-ui/core";
 import firebase from "firebase";
-import { FC, useEffect, useState } from "react";
-import { FirebaseAuth, FirebaseFirestore } from "../../services/firebase";
+import { FC, Fragment, useEffect, useState } from "react";
+import { FirebaseAuth } from "../../services/firebase";
 import { messageBoxStyle } from "./style";
 
 interface MessageBoxProps {
@@ -9,35 +9,36 @@ interface MessageBoxProps {
 }
 
 interface UserInterface {
-  name?: string;
+  uid: string;
+  displayName?: string;
 }
 
 const MessageBox: FC<MessageBoxProps> = ({ message }) => {
-  const [user, setUser] = useState<UserInterface>({});
+  const [user, setUser] = useState<UserInterface>();
 
   const [myMessage, setMyMessage] = useState(false);
 
   useEffect(() => {
-    const userId = message.data().user as string;
+    const userData = message.data().user as UserInterface;
 
-    if (userId === FirebaseAuth.currentUser?.uid) {
+    if (userData.uid === FirebaseAuth.currentUser?.uid) {
       setMyMessage(true);
     }
 
-    FirebaseFirestore.collection("users")
-      .doc(userId)
-      .get()
-      .then((document) => {
-        const name = document.data()?.name as string;
-        setUser({ name });
-      });
+    setUser(userData);
   }, [message]);
 
   const style = messageBoxStyle();
 
   return (
     <Card className={myMessage ? style.sendMessage : style.receivedMessage}>
-      <Typography variant="subtitle1">{user.name || "Anônimo"}</Typography>
+      {myMessage ? (
+        <Fragment />
+      ) : (
+        <Typography color="primary" variant="subtitle1">
+          {user?.displayName || "Anônimo"}
+        </Typography>
+      )}
       <Typography variant="body1">{message.data().text}</Typography>
     </Card>
   );

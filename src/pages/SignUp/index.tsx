@@ -1,6 +1,8 @@
-import { Button, Container, TextField, Typography } from "@material-ui/core";
+import { Button, Container, Grid, Typography } from "@material-ui/core";
 import { FC, useState } from "react";
-import { FirebaseAuth, FirebaseFirestore } from "../../services/firebase";
+import { useHistory } from "react-router-dom";
+import FormTextField from "../../components/FormTextField";
+import { FirebaseAuth } from "../../services/firebase";
 
 const SignUp: FC = () => {
   const [name, setName] = useState("");
@@ -8,69 +10,95 @@ const SignUp: FC = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const history = useHistory();
+
   async function onSubmit() {
     try {
       if (password !== confirmPassword) {
-        window.alert("Senhas não coinsidem");
+        return window.alert("Senhas não coinsidem");
       }
 
-      const credential = await FirebaseAuth.createUserWithEmailAndPassword(
-        email,
-        password
+      FirebaseAuth.createUserWithEmailAndPassword(email, password).then(
+        async (credential) => {
+          await credential.user?.updateProfile({
+            displayName: name,
+          });
+        }
       );
-
-      const uid = credential.user?.uid;
-
-      FirebaseFirestore.collection("users").doc(uid).set({ name });
     } catch (error) {
       console.error(error);
     }
   }
 
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h4">Cadastro de usuário</Typography>
-
-      <form onSubmit={onSubmit}>
-        <TextField
-          onChange={(e) => setName(e.target.value)}
-          margin="normal"
-          label="Nome"
-          required
-          fullWidth
-          variant="outlined"
-        />
-        <TextField
-          onChange={(e) => setEmail(e.target.value)}
-          margin="normal"
-          label="E-mail"
-          required
-          type="email"
-          fullWidth
-          variant="outlined"
-        />
-        <TextField
-          onChange={(e) => setPassword(e.target.value)}
-          margin="normal"
-          label="Senha"
-          type="password"
-          required
-          fullWidth
-          variant="outlined"
-        />
-        <TextField
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          margin="normal"
-          type="password"
-          required
-          label="Confirmar Senha"
-          fullWidth
-          variant="outlined"
-        />
-        <Button fullWidth type="submit" variant="contained" color="primary">
-          Cadastrar
-        </Button>
-      </form>
+    <Container style={{ height: "100%" }} maxWidth="sm">
+      <Grid
+        style={{ height: "100%" }}
+        container
+        justify="center"
+        alignItems="center"
+      >
+        <div>
+          <Typography variant="h4">Cadastro de usuário</Typography>
+          <form onSubmit={onSubmit}>
+            <FormTextField
+              onChange={(e) => setName(e.target.value)}
+              helperText="Nome é obrigatório"
+              label="Nome"
+              variant="outlined"
+              required
+            />
+            <FormTextField
+              onChange={(e) => setEmail(e.target.value)}
+              helperText="E-mail precisa ser válido"
+              label="E-mail"
+              type="email"
+              variant="outlined"
+              required
+            />
+            <FormTextField
+              onChange={(e) => setPassword(e.target.value)}
+              label="Senha"
+              helperText="Essa senha não é inválida"
+              type="password"
+              required
+              variant="outlined"
+            />
+            <FormTextField
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              helperText="Essa senha não é inválida"
+              type="password"
+              required
+              label="Confirmar Senha"
+              variant="outlined"
+            />
+            <Button
+              style={{
+                marginTop: ".5rem",
+                marginBottom: ".5rem",
+              }}
+              fullWidth
+              type="submit"
+              variant="contained"
+              color="primary"
+            >
+              Cadastrar
+            </Button>
+          </form>
+          <Button
+            style={{
+              marginTop: ".5rem",
+              marginBottom: ".5rem",
+            }}
+            fullWidth
+            variant="outlined"
+            color="primary"
+            onClick={() => history.push("/sign-in")}
+          >
+            Já possui conta?
+          </Button>
+        </div>
+      </Grid>
     </Container>
   );
 };

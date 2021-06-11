@@ -2,6 +2,7 @@ import { Container, Grid, IconButton, TextField } from "@material-ui/core";
 import { PowerOffOutlined, Send } from "@material-ui/icons";
 import firebase from "firebase";
 import { FC, FormEvent, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import MessageBox from "../../components/MessageBox";
 import { FirebaseAuth, FirebaseFirestore } from "../../services/firebase";
 
@@ -9,6 +10,8 @@ const Chat: FC = () => {
   const [messagesList, setMessagesList] =
     useState<firebase.firestore.QueryDocumentSnapshot[]>();
   const [text, setText] = useState("");
+
+  const history = useHistory();
 
   useEffect(() => {
     FirebaseFirestore.collection("messages")
@@ -23,7 +26,10 @@ const Chat: FC = () => {
 
     FirebaseFirestore.collection("messages").add({
       text,
-      user: FirebaseAuth.currentUser?.uid,
+      user: {
+        displayName: FirebaseAuth.currentUser?.displayName,
+        uid: FirebaseAuth.currentUser?.uid,
+      },
       timestamp: new Date(),
     });
 
@@ -31,7 +37,8 @@ const Chat: FC = () => {
   }
 
   async function signOut() {
-    FirebaseAuth.signOut();
+    await FirebaseAuth.signOut();
+    history.push("/sign-in");
   }
 
   return (
