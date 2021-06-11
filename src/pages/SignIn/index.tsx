@@ -27,6 +27,8 @@ const SignIn: FC = () => {
         <TextField
           onChange={(e) => setEmail(e.target.value)}
           label="E-mail"
+          type="email"
+          required
           margin="normal"
           variant="outlined"
           fullWidth
@@ -34,6 +36,8 @@ const SignIn: FC = () => {
         <TextField
           onChange={(e) => setPassword(e.target.value)}
           label="Senha"
+          type="password"
+          required
           margin="normal"
           variant="outlined"
           fullWidth

@@ -4,13 +4,13 @@ let app: firebase.app.App;
 
 if (!firebase.apps.length) {
   const firebaseConfig = {
-    apiKey: "AIzaSyBqV2P2GsV_EWbDXVi1AR6GMXhv-fDCtn0",
-    authDomain: "chat-react-dd5ae.firebaseapp.com",
-    projectId: "chat-react-dd5ae",
-    storageBucket: "chat-react-dd5ae.appspot.com",
-    messagingSenderId: "991447987696",
-    appId: "1:991447987696:web:0e6b256c105a164a831935",
-    measurementId: "G-RLWYYNLYEG",
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID,
+    measurementId: process.env.REACT_APP_MEASUREMENT_ID,
   };
 
   app = firebase.initializeApp(firebaseConfig);
