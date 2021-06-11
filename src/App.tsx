@@ -1,8 +1,14 @@
 import "fontsource-roboto";
-import SignIn from "./pages/SignIn";
+import { BrowserRouter } from "react-router-dom";
+import "./app.scss";
+import Routes from "./routes";
 
 function App() {
-  return <SignIn />;
+  return (
+    <BrowserRouter>
+      <Routes />
+    </BrowserRouter>
+  );
 }
 
 export default App;
