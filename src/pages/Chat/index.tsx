@@ -1,11 +1,23 @@
 import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Fade,
   IconButton,
   Modal,
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Add, PowerOffOutlined, Search, Send } from "@material-ui/icons";
+import {
+  Add,
+  FileCopy,
+  PowerOffOutlined,
+  Search,
+  Send,
+} from "@material-ui/icons";
 import firebase from "firebase";
 import { FC, FormEvent, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -24,6 +36,9 @@ export interface UserProps {
 const Chat: FC = () => {
   const [messagesList, setMessagesList] =
     useState<firebase.firestore.QueryDocumentSnapshot[]>();
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [searchChat, setSearchChat] = useState("");
 
   const [text, setText] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -75,6 +90,7 @@ const Chat: FC = () => {
   async function sendMessage(e: FormEvent) {
     e.preventDefault();
 
+    currentChat?.ref.set({ ...currentChat.data(), lastModify: new Date() });
     currentChat?.ref.collection("messages").add({
       text,
       user: {
@@ -85,6 +101,30 @@ const Chat: FC = () => {
     });
 
     setText("");
+  }
+
+  function addChat(e: FormEvent) {
+    e.preventDefault();
+    if (searchChat === "") return;
+
+    FirebaseFirestore.collection("chats")
+      .doc(searchChat)
+      .get()
+      .then((documentSnapshot) => {
+        if (documentSnapshot.exists) {
+          const key = documentSnapshot?.data()?.key;
+
+          const chats = user.chats?.concat([key]) || [key];
+          FirebaseFirestore.collection("users")
+            .doc(uid)
+            .set({ chats })
+            .then(() => {
+              setSearchChat("");
+            });
+        } else {
+          setShowDialog(true);
+        }
+      });
   }
 
   useEffect(() => {
@@ -98,12 +138,21 @@ const Chat: FC = () => {
     history.push("/sign-in");
   }
 
+  function copyKeyToClipboard() {
+    navigator.clipboard.writeText(currentChat?.id!);
+  }
+
   return (
     <div className={style.chat}>
       <div className={style.chatHeader}>
-        <Typography style={{ color: "white" }}>
-          {currentChat?.data()?.name}
-        </Typography>
+        <Typography>{currentChat?.data()?.name}</Typography>
+
+        <div>
+          <Typography>Key: {currentChat?.id}</Typography>
+          <IconButton color="inherit" onClick={copyKeyToClipboard} size="small">
+            <FileCopy />
+          </IconButton>
+        </div>
       </div>
       <section className={style.messages}>
         {messagesList?.map((message) => {
@@ -127,11 +176,17 @@ const Chat: FC = () => {
       </form>
       <aside className={style.chatList}>
         <header>
-          <TextField placeholder="Insira uma chatKey" />
+          <form onSubmit={addChat}>
+            <TextField
+              value={searchChat}
+              onChange={(e) => setSearchChat(e.target.value)}
+              placeholder="Insira uma chatKey"
+            />
+            <IconButton type="submit" color="primary" aria-label="Buscar">
+              <Search />
+            </IconButton>
+          </form>
 
-          <IconButton color="primary" aria-label="Buscar">
-            <Search />
-          </IconButton>
           <IconButton
             onClick={() => setShowModal(true)}
             color="primary"
@@ -147,7 +202,7 @@ const Chat: FC = () => {
                 key={e.id}
                 onClick={() => setCurrentChat(e)}
                 chatDocument={e}
-                selectedChat={e === currentChat}
+                selectedChat={e.id === currentChat?.id}
               />
             );
           })}
@@ -174,6 +229,19 @@ const Chat: FC = () => {
           />
         </Fade>
       </Modal>
+      <Dialog open={showDialog} onClose={() => setShowDialog(false)}>
+        <DialogTitle>Chat não encontrado</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Verifique se a chatKey está correta.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="secondary" onClick={() => setShowDialog(false)}>
+            Fechar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
