@@ -35,7 +35,13 @@ const SignIn: FC = () => {
         justify="center"
         alignItems="center"
       >
-        <div>
+        <div
+          style={{
+            background: "#f0f0f5",
+            borderRadius: ".4rem",
+            padding: "1rem",
+          }}
+        >
           <Typography variant="h4">Login</Typography>
           <form onSubmit={onSubmit}>
             <TextField

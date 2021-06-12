@@ -1,0 +1,23 @@
+.messageBox {
+  background: white;
+  box-shadow: rgba($color: #000000, $alpha: 0.5) 2px 2px 4px;
+  margin: 0.5rem 1rem;
+  padding: 0.5rem 1rem;
+
+  max-width: 35rem;
+  border-radius: 0.4rem;
+  width: fit-content;
+  text-align: justify;
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  &.send {
+    align-self: flex-end;
+  }
+
+  &.received {
+    align-self: flex-start;
+  }
+}

@@ -1,25 +1,20 @@
-import { Card, Typography } from "@material-ui/core";
 import firebase from "firebase";
 import { FC, Fragment, useEffect, useState } from "react";
+import { UserProps } from "../../pages/Chat";
 import { FirebaseAuth } from "../../services/firebase";
-import { messageBoxStyle } from "./style";
+import style from "./style.module.scss";
 
 interface MessageBoxProps {
   message: firebase.firestore.QueryDocumentSnapshot;
 }
 
-interface UserInterface {
-  uid: string;
-  displayName?: string;
-}
-
 const MessageBox: FC<MessageBoxProps> = ({ message }) => {
-  const [user, setUser] = useState<UserInterface>();
+  const [user, setUser] = useState<UserProps>();
 
   const [myMessage, setMyMessage] = useState(false);
 
   useEffect(() => {
-    const userData = message.data().user as UserInterface;
+    const userData = message.data().user as UserProps;
 
     if (userData.uid === FirebaseAuth.currentUser?.uid) {
       setMyMessage(true);
@@ -28,19 +23,15 @@ const MessageBox: FC<MessageBoxProps> = ({ message }) => {
     setUser(userData);
   }, [message]);
 
-  const style = messageBoxStyle();
-
   return (
-    <Card className={myMessage ? style.sendMessage : style.receivedMessage}>
-      {myMessage ? (
-        <Fragment />
-      ) : (
-        <Typography color="primary" variant="subtitle1">
-          {user?.displayName || "Anônimo"}
-        </Typography>
-      )}
-      <Typography variant="body1">{message.data().text}</Typography>
-    </Card>
+    <div
+      className={`${style.messageBox} ${
+        myMessage ? style.send : style.received
+      }`}
+    >
+      {!myMessage ? <h1>{user?.displayName || "Anônimo"}</h1> : <Fragment />}
+      <p>{message.data().text}</p>
+    </div>
   );
 };
 

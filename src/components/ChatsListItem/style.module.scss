@@ -1,0 +1,17 @@
+.chatsListItems {
+  width: 100%;
+  padding: 1rem 2rem;
+  margin-top: -1px;
+  cursor: pointer;
+
+  background: #c3c3c7;
+  transition: filter 0.2s;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+
+  + .chatsListItems {
+    border-bottom: 1px solid rgb(156, 156, 156);
+  }
+}

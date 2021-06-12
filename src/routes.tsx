@@ -11,10 +11,7 @@ const Routes: FC = () => {
   FirebaseAuth.onAuthStateChanged((user) => {
     if (user) {
       history.push("/");
-    } else if (
-      history.location.pathname !== "/sign-in" &&
-      history.location.pathname !== "/sign-up"
-    ) {
+    } else {
       history.push("/sign-in");
     }
   });

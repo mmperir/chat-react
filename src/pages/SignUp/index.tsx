@@ -1,5 +1,5 @@
 import { Button, Container, Grid, Typography } from "@material-ui/core";
-import { FC, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import { useHistory } from "react-router-dom";
 import FormTextField from "../../components/FormTextField";
 import { FirebaseAuth } from "../../services/firebase";
@@ -12,7 +12,9 @@ const SignUp: FC = () => {
 
   const history = useHistory();
 
-  async function onSubmit() {
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+
     try {
       if (password !== confirmPassword) {
         return window.alert("Senhas não coinsidem");
@@ -20,7 +22,7 @@ const SignUp: FC = () => {
 
       FirebaseAuth.createUserWithEmailAndPassword(email, password).then(
         async (credential) => {
-          await credential.user?.updateProfile({
+          credential.user?.updateProfile({
             displayName: name,
           });
         }
@@ -38,7 +40,13 @@ const SignUp: FC = () => {
         justify="center"
         alignItems="center"
       >
-        <div>
+        <div
+          style={{
+            background: "#f0f0f5",
+            borderRadius: ".4rem",
+            padding: "1rem",
+          }}
+        >
           <Typography variant="h4">Cadastro de usuário</Typography>
           <form onSubmit={onSubmit}>
             <FormTextField

@@ -1,0 +1,109 @@
+.chat {
+  background: #f0f0f5;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 90rem;
+  height: 100%;
+  max-height: 90%;
+  border-radius: 0.4rem;
+  position: relative;
+
+  $left: 20rem;
+
+  .chatList {
+    width: $left;
+    height: 100%;
+    position: absolute;
+    background: #c3c3c7;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 0.4rem 0 0 0.4rem;
+
+    top: 0;
+
+    header {
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    > main {
+      height: 100%;
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: flex-end;
+      overflow-y: auto;
+      border-top: 1px solid #696969;
+      border-bottom: 1px solid #696969;
+
+      &::-webkit-scrollbar {
+        height: 0.8rem;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: grey;
+        border-radius: 0.4rem;
+      }
+    }
+
+    footer {
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .signOut {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .messages {
+    margin-left: $left;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      height: 0.8rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: grey;
+      border-radius: 0.4rem;
+    }
+  }
+
+  .chatHeader {
+    margin-left: $left;
+    background: #3f51b5;
+    border-radius: 0 0.4rem 0 0;
+    padding: 1rem 2rem;
+  }
+
+  .form {
+    margin-left: $left;
+    padding: 1rem;
+    display: flex;
+    flex-wrap: nowrap;
+
+    align-items: center;
+
+    > button {
+      margin-left: 1rem;
+    }
+  }
+}
