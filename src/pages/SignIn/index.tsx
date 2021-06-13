@@ -1,30 +1,58 @@
 import {
   Button,
+  Card,
+  CircularProgress,
   Container,
+  Fade,
   Grid,
-  TextField,
+  Modal,
   Typography,
 } from "@material-ui/core";
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, Fragment, useState } from "react";
 import { useHistory } from "react-router-dom";
+import FormTextField from "../../components/FormTextField";
 import { FirebaseAuth } from "../../services/firebase";
 import { buttonStyle } from "./style";
+import style from "./style.module.scss";
 
 const SignIn: FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [recoverEmail, setRecoverEmail] = useState("");
+  const [invalidAuth, setInvalidAuth] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
 
   const history = useHistory();
 
-  const style = buttonStyle();
+  const styled = buttonStyle();
 
-  async function onSubmit(e: FormEvent) {
+  function onSubmit(e: FormEvent) {
+    setIsLoading(true);
     e.preventDefault();
-    try {
-      await FirebaseAuth.signInWithEmailAndPassword(email, password);
-    } catch (error) {
-      console.error(error);
-    }
+    FirebaseAuth.signInWithEmailAndPassword(email, password)
+      .finally(() => {
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setInvalidAuth(true);
+      });
+  }
+
+  function sendRecoveryPass(e: FormEvent) {
+    setIsLoading(true);
+    e.preventDefault();
+    FirebaseAuth.sendPasswordResetEmail(recoverEmail).finally(() => {
+      setIsLoading(false);
+      closeModal();
+    });
+  }
+
+  function closeModal() {
+    setRecoverEmail("");
+    setShowModal(false);
   }
 
   return (
@@ -42,9 +70,10 @@ const SignIn: FC = () => {
             padding: "1rem",
           }}
         >
-          <Typography variant="h4">Login</Typography>
+          <Typography variant="h6">Login</Typography>
           <form onSubmit={onSubmit}>
-            <TextField
+            <FormTextField
+              helperText="Esse campo precisa ser um e-mail válido"
               onChange={(e) => setEmail(e.target.value)}
               label="E-mail"
               type="email"
@@ -53,7 +82,8 @@ const SignIn: FC = () => {
               variant="outlined"
               fullWidth
             />
-            <TextField
+            <FormTextField
+              helperText="Esse campo é obrigatório"
               onChange={(e) => setPassword(e.target.value)}
               label="Senha"
               type="password"
@@ -62,9 +92,15 @@ const SignIn: FC = () => {
               variant="outlined"
               fullWidth
             />
-
+            {invalidAuth ? (
+              <div className={style.invalidAuth}>
+                Nome de usuário ou senha inválidos
+              </div>
+            ) : (
+              <Fragment />
+            )}
             <Button
-              className={style.formButton}
+              className={styled.formButton}
               type="submit"
               fullWidth
               variant="contained"
@@ -74,7 +110,7 @@ const SignIn: FC = () => {
             </Button>
           </form>
           <Button
-            className={style.formButton}
+            className={styled.formButton}
             onClick={() => history.push("/sign-up")}
             fullWidth
             variant="outlined"
@@ -83,14 +119,65 @@ const SignIn: FC = () => {
             Cadastrar-se
           </Button>
           <Button
-            className={style.formButton}
-            onClick={onSubmit}
+            className={styled.formButton}
+            onClick={() => setShowModal(true)}
             variant="text"
           >
             Esqueceu sua senha?
           </Button>
         </div>
       </Grid>
+
+      <Modal
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        open={showModal}
+        onClose={closeModal}
+      >
+        <Fade in={showModal}>
+          {isLoading ? (
+            <CircularProgress color="secondary" />
+          ) : (
+            <Container maxWidth="xs">
+              <Card style={{ padding: "1rem" }}>
+                <Typography>Recuperação de senha</Typography>
+                <form onSubmit={sendRecoveryPass}>
+                  <FormTextField
+                    onChange={(e) => setRecoverEmail(e.target.value)}
+                    helperText="Este campo precisa ser um e-mail válido"
+                    required
+                    type="email"
+                    label="E-mail"
+                    variant="outlined"
+                  />
+                  <Grid container wrap="nowrap">
+                    <Button
+                      onClick={closeModal}
+                      variant="outlined"
+                      color="primary"
+                      fullWidth
+                    >
+                      Cancelar
+                    </Button>
+                    <div style={{ width: "1rem" }} />
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                    >
+                      Enviar
+                    </Button>
+                  </Grid>
+                </form>
+              </Card>
+            </Container>
+          )}
+        </Fade>
+      </Modal>
     </Container>
   );
 };

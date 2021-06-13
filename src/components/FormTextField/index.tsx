@@ -14,6 +14,9 @@ const FormTextField: FC<FormTextFieldInterface> = ({ helperText, ...rest }) => {
       error={invalid}
       margin="normal"
       fullWidth
+      onChangeCapture={() => {
+        setInvalid(false);
+      }}
       onInvalid={(e) => {
         e.preventDefault();
         setInvalid(true);

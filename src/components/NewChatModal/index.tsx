@@ -7,8 +7,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import { FC, FormEvent, Fragment, useState } from "react";
-import { FirebaseAuth, FirebaseFirestore } from "../services/firebase";
-import FormTextField from "./FormTextField";
+import { FirebaseAuth, FirebaseFirestore } from "../../services/firebase";
+import FormTextField from "../FormTextField";
 
 interface NewChatModalProps {
   onClose: VoidFunction;

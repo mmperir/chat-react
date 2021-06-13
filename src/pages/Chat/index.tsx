@@ -1,11 +1,13 @@
 import {
   Button,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Fade,
+  Grid,
   IconButton,
   Modal,
   TextField,
@@ -140,130 +142,132 @@ const Chat: FC = () => {
   }
 
   return (
-    <div className={style.chat}>
-      <aside className={style.chatList}>
-        <header>
-          <form onSubmit={addChat}>
-            <TextField
-              value={searchChat}
-              onChange={(e) => setSearchChat(e.target.value)}
-              placeholder="Insira uma chatKey"
-            />
-            <IconButton type="submit" color="primary" aria-label="Buscar">
-              <Search />
-            </IconButton>
-          </form>
-
-          <IconButton
-            onClick={() => setShowModal(true)}
-            color="primary"
-            aria-label="Criar novo chat"
-          >
-            <Add />
-          </IconButton>
-        </header>
-        <main>
-          {chatsList?.map((e) => {
-            return (
-              <ChatsListItems
-                key={e.id}
-                onClick={() => setCurrentChat(e)}
-                chatDocument={e}
-                selectedChat={e.id === currentChat?.id}
-              />
-            );
-          })}
-        </main>
-        <footer>
-          <IconButton onClick={signOut} color="secondary" aria-label="Enviar">
-            <ExitToApp />
-          </IconButton>
-        </footer>
-      </aside>
-      <div className={style.chatContainer}>
-        {!currentChat ? (
-          <div
-            style={{
-              width: "fit-content",
-              display: "flex",
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-          >
-            <Typography align="center">
-              Crie chats, compartilhe a chave do chat.
-              <br />E converse com varias pessoas ao mesmo tempo!
-            </Typography>
-          </div>
-        ) : (
-          <Fragment>
-            <div className={style.chatHeader}>
-              <Typography>{currentChat?.data()?.name}</Typography>
-
-              <div>
-                <Typography>{currentChat?.id}</Typography>
-                <IconButton
-                  color="inherit"
-                  onClick={copyKeyToClipboard}
-                  size="small"
-                >
-                  <FileCopy />
-                </IconButton>
-              </div>
-            </div>
-            <section className={style.messages}>
-              {messagesList?.map((message) => {
-                return <MessageBox key={message.id} message={message} />;
-              })}
-            </section>
-            <form onSubmit={sendMessage} className={style.form}>
+    <Container style={{ padding: 0 }} className={style.chat} maxWidth="lg">
+      <Grid container style={{ height: "100%" }} direction="row" wrap="nowrap">
+        <aside className={style.chatList}>
+          <header>
+            <form onSubmit={addChat}>
               <TextField
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                variant="outlined"
-                placeholder="Digite uma mensagem"
-                required
-                fullWidth
-                onInvalid={(e) => e.preventDefault()}
+                value={searchChat}
+                onChange={(e) => setSearchChat(e.target.value)}
+                placeholder="Insira uma chatKey"
               />
-
-              <IconButton type="submit" color="primary" aria-label="Enviar">
-                <Send />
+              <IconButton type="submit" color="primary" aria-label="Buscar">
+                <Search />
               </IconButton>
             </form>
-          </Fragment>
-        )}
-      </div>
-      <Modal
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        onClose={() => setShowModal(false)}
-        open={showModal}
-      >
-        <Fade in={showModal}>
-          <NewChatModal
-            currentChats={user.chats}
-            onClose={() => setShowModal(false)}
-          />
-        </Fade>
-      </Modal>
-      <Dialog open={showDialog} onClose={() => setShowDialog(false)}>
-        <DialogTitle>Chat não encontrado</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Verifique se a chatKey está correta.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button color="secondary" onClick={() => setShowDialog(false)}>
-            Fechar
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+
+            <IconButton
+              onClick={() => setShowModal(true)}
+              color="primary"
+              aria-label="Criar novo chat"
+            >
+              <Add />
+            </IconButton>
+          </header>
+          <main>
+            {chatsList?.map((e) => {
+              return (
+                <ChatsListItems
+                  key={e.id}
+                  onClick={() => setCurrentChat(e)}
+                  chatDocument={e}
+                  selectedChat={e.id === currentChat?.id}
+                />
+              );
+            })}
+          </main>
+          <footer>
+            <IconButton onClick={signOut} color="secondary" aria-label="Enviar">
+              <ExitToApp />
+            </IconButton>
+          </footer>
+        </aside>
+        <div className={style.chatContainer}>
+          {!currentChat ? (
+            <div
+              style={{
+                width: "fit-content",
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <Typography align="center">
+                Crie chats, compartilhe a chave do chat.
+                <br />E converse com varias pessoas ao mesmo tempo!
+              </Typography>
+            </div>
+          ) : (
+            <Fragment>
+              <div className={style.chatHeader}>
+                <Typography>{currentChat?.data()?.name}</Typography>
+
+                <div>
+                  <Typography>{currentChat?.id}</Typography>
+                  <IconButton
+                    color="inherit"
+                    onClick={copyKeyToClipboard}
+                    size="small"
+                  >
+                    <FileCopy />
+                  </IconButton>
+                </div>
+              </div>
+              <section className={style.messages}>
+                {messagesList?.map((message) => {
+                  return <MessageBox key={message.id} message={message} />;
+                })}
+              </section>
+              <form onSubmit={sendMessage} className={style.form}>
+                <TextField
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  variant="outlined"
+                  placeholder="Digite uma mensagem"
+                  required
+                  fullWidth
+                  onInvalid={(e) => e.preventDefault()}
+                />
+
+                <IconButton type="submit" color="primary" aria-label="Enviar">
+                  <Send />
+                </IconButton>
+              </form>
+            </Fragment>
+          )}
+        </div>
+        <Modal
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onClose={() => setShowModal(false)}
+          open={showModal}
+        >
+          <Fade in={showModal}>
+            <NewChatModal
+              currentChats={user.chats}
+              onClose={() => setShowModal(false)}
+            />
+          </Fade>
+        </Modal>
+        <Dialog open={showDialog} onClose={() => setShowDialog(false)}>
+          <DialogTitle>Chat não encontrado</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Verifique se a chatKey está correta.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button color="secondary" onClick={() => setShowDialog(false)}>
+              Fechar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Grid>
+    </Container>
   );
 };
 

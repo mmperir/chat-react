@@ -47,7 +47,7 @@ const SignUp: FC = () => {
             padding: "1rem",
           }}
         >
-          <Typography variant="h4">Cadastro de usuário</Typography>
+          <Typography variant="h6">Cadastro de usuário</Typography>
           <form onSubmit={onSubmit}>
             <FormTextField
               onChange={(e) => setName(e.target.value)}
