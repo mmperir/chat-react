@@ -126,7 +126,7 @@ const Chat: FC = () => {
   useEffect(() => {
     currentChat?.ref
       .collection("messages")
-      .orderBy("timestamp")
+      .orderBy("timestamp", "desc")
       .onSnapshot((querySnapshot) => {
         setMessagesList(querySnapshot.docs);
       });
