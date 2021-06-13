@@ -11,15 +11,9 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import {
-  Add,
-  FileCopy,
-  PowerOffOutlined,
-  Search,
-  Send,
-} from "@material-ui/icons";
+import { Add, ExitToApp, FileCopy, Search, Send } from "@material-ui/icons";
 import firebase from "firebase";
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, Fragment, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import ChatsListItems from "../../components/ChatsListItem";
 import MessageBox from "../../components/MessageBox";
@@ -128,9 +122,12 @@ const Chat: FC = () => {
   }
 
   useEffect(() => {
-    currentChat?.ref.collection("messages").onSnapshot((querySnapshot) => {
-      setMessagesList(querySnapshot.docs);
-    });
+    currentChat?.ref
+      .collection("messages")
+      .orderBy("timestamp")
+      .onSnapshot((querySnapshot) => {
+        setMessagesList(querySnapshot.docs);
+      });
   }, [currentChat]);
 
   async function signOut() {
@@ -144,36 +141,6 @@ const Chat: FC = () => {
 
   return (
     <div className={style.chat}>
-      <div className={style.chatHeader}>
-        <Typography>{currentChat?.data()?.name}</Typography>
-
-        <div>
-          <Typography>Key: {currentChat?.id}</Typography>
-          <IconButton color="inherit" onClick={copyKeyToClipboard} size="small">
-            <FileCopy />
-          </IconButton>
-        </div>
-      </div>
-      <section className={style.messages}>
-        {messagesList?.map((message) => {
-          return <MessageBox key={message.id} message={message} />;
-        })}
-      </section>
-      <form onSubmit={sendMessage} className={style.form}>
-        <TextField
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          variant="outlined"
-          placeholder="Digite uma mensagem"
-          required
-          fullWidth
-          onInvalid={(e) => e.preventDefault()}
-        />
-
-        <IconButton type="submit" color="primary" aria-label="Enviar">
-          <Send />
-        </IconButton>
-      </form>
       <aside className={style.chatList}>
         <header>
           <form onSubmit={addChat}>
@@ -209,10 +176,64 @@ const Chat: FC = () => {
         </main>
         <footer>
           <IconButton onClick={signOut} color="secondary" aria-label="Enviar">
-            <PowerOffOutlined />
+            <ExitToApp />
           </IconButton>
         </footer>
       </aside>
+      <div className={style.chatContainer}>
+        {!currentChat ? (
+          <div
+            style={{
+              width: "fit-content",
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Typography align="center">
+              Crie chats, compartilhe a chave do chat.
+              <br />E converse com varias pessoas ao mesmo tempo!
+            </Typography>
+          </div>
+        ) : (
+          <Fragment>
+            <div className={style.chatHeader}>
+              <Typography>{currentChat?.data()?.name}</Typography>
+
+              <div>
+                <Typography>{currentChat?.id}</Typography>
+                <IconButton
+                  color="inherit"
+                  onClick={copyKeyToClipboard}
+                  size="small"
+                >
+                  <FileCopy />
+                </IconButton>
+              </div>
+            </div>
+            <section className={style.messages}>
+              {messagesList?.map((message) => {
+                return <MessageBox key={message.id} message={message} />;
+              })}
+            </section>
+            <form onSubmit={sendMessage} className={style.form}>
+              <TextField
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                variant="outlined"
+                placeholder="Digite uma mensagem"
+                required
+                fullWidth
+                onInvalid={(e) => e.preventDefault()}
+              />
+
+              <IconButton type="submit" color="primary" aria-label="Enviar">
+                <Send />
+              </IconButton>
+            </form>
+          </Fragment>
+        )}
+      </div>
       <Modal
         style={{
           display: "flex",

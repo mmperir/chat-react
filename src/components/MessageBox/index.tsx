@@ -16,7 +16,9 @@ const MessageBox: FC<MessageBoxProps> = ({ message }) => {
   useEffect(() => {
     const userData = message.data().user as UserProps;
 
-    if (userData.uid === FirebaseAuth.currentUser?.uid) {
+    const uid = FirebaseAuth.currentUser?.uid;
+
+    if (userData.uid === uid) {
       setMyMessage(true);
     }
 
