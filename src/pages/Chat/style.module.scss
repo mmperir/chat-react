@@ -1,5 +1,4 @@
 .chat {
-  background: #f0f0f5;
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -80,6 +79,7 @@
   }
 
   .messages {
+    background: #f0f0f5;
     display: flex;
     flex-direction: column-reverse;
     height: 100%;
@@ -119,6 +119,8 @@
   }
 
   .form {
+    background: #f0f0f5;
+    border-bottom-right-radius: 0.4rem;
     padding: 1rem;
     display: flex;
     flex-wrap: nowrap;

@@ -142,7 +142,7 @@ const Chat: FC = () => {
   }
 
   return (
-    <Container style={{ padding: 0 }} className={style.chat} maxWidth="lg">
+    <Container className={style.chat} maxWidth="lg">
       <Grid container style={{ height: "100%" }} direction="row" wrap="nowrap">
         <aside className={style.chatList}>
           <header>
